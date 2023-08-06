@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Services\{UserService};
 
 class HomeController extends Controller
 {
@@ -25,4 +26,37 @@ class HomeController extends Controller
     {
         return view('home');
     }
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function viewRegisters()
+    {
+        return view('register',[
+            "name"          => \request()->user()->name,
+            "last_name"     => \request()->user()->last_name,
+            "second_name"   => \request()->user()->second_name,
+            "phone"         => \request()->user()->phone,
+            "email"         => \request()->user()->email,
+        ]);
+    }
+
+    public function storeRegisterUser()
+    {
+        $response = (new UserService())->saveRepository(\request()->except(["_token"]));
+
+        return view("home",[
+           "address"    => \request()->user()?->address,
+           "no_int"     => \request()->user()?->no_int ,
+           "no_ext"     => \request()->user()?->no_ext ,
+           "cp"         => \request()->user()?->cp     ,
+           "state"      => \request()->user()?->state  ,
+           "city"       => \request()->user()?->city   ,
+           "colony"     => \request()->user()?->colony ,
+           "status"     => \request()->user()?->status ,
+        ]);
+    }
+
 }
