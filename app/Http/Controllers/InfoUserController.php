@@ -5,17 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreInfoUserRequest;
 use App\Http\Requests\UpdateInfoUserRequest;
 use App\Models\InfoUser;
+use App\Services\{UserService};
 
 class InfoUserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
     /**
      * Show the form for creating a new resource.
      */
@@ -35,7 +28,15 @@ class InfoUserController extends Controller
      */
     public function store(StoreInfoUserRequest $request)
     {
-        \request()->dd();
+        $response = (new UserService)->relationshipInfoRepository(
+            \request()->merge(["status" => true])->except("_token")
+        );
+
+        $token      = (new UserService)->getWsToken();
+        $assessment = (new UserService)->getWsAssessment($response?->rfc,$token);
+
+        dd($assessment);
+
     }
 
     /**

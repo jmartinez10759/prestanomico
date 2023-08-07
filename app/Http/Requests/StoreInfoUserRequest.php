@@ -25,7 +25,8 @@ class StoreInfoUserRequest extends FormRequest
             "rfc"              => "required|string",
             "birthdate"        => "required|date",
             "monthly_salary"   => "required|numeric|min:0",
-            "monthly_expenses" => "required|numeric|min:0"
+            "monthly_expenses" => "required|numeric|min:0",
+            "dependents"       => "required"
         ];
     }
 }

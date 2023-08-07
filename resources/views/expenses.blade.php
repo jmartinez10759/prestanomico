@@ -24,7 +24,7 @@
                                         type="text"
                                         class="form-control @error('rfc') is-invalid @enderror"
                                         name="rfc"
-                                        value="{{ old('rfc') }}"
+                                        value="{{ $rfc }}"
                                         required
                                         autocomplete="rfc"
                                         autofocus
@@ -46,7 +46,7 @@
                                         type="date"
                                         class="form-control @error('birthdate') is-invalid @enderror"
                                         name="birthdate"
-                                        value="{{ old('birthdate') }}"
+                                        value="{{ $birthdate }}"
                                         required
                                         autocomplete="birthdate"
                                         autofocus
@@ -68,7 +68,7 @@
                                         type="text"
                                         class="form-control @error('monthly_salary') is-invalid @enderror"
                                         name="monthly_salary"
-                                        value="{{ old('monthly_salary') }}"
+                                        value="{{ $monthly_salary }}"
                                         autocomplete="monthly_salary"
                                         autofocus
                                 >
@@ -89,7 +89,7 @@
                                         type="text"
                                         class="form-control @error('monthly_expenses') is-invalid @enderror"
                                         name="monthly_expenses"
-                                        value="{{ old('monthly_expenses') }}"
+                                        value="{{ $monthly_expenses }}"
                                         required
                                         autocomplete="monthly_expenses"
                                         autofocus
@@ -124,18 +124,14 @@
                             </div>
                         </div>
 
-
-
-
-
-
                         <div class="row mb-0">
                             <div class="col-md-6 offset-md-4">
                                 <a class="btn btn-danger" href="{{route('view.address')}}">
                                     Regresar
                                 </a>
 
-                                <button type="submit" class="btn btn-primary">
+                                <button type="button" class="btn btn-primary" onclick="storeExpenses(event)">
+                                    <i class="spinner-border spinner-border-sm" id="spinner"></i>
                                     Finalizar
                                 </button>
                             </div>
@@ -146,5 +142,78 @@
         </div>
     </div>
 </div>
+
+ <!-- Modal -->
+      <div class="modal fade" id="score" >
+         <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+               <div class="modal-header">
+                  <h4 class="modal-title">Solicitud Rechazada</h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+               </div>
+               <div class="modal-body">
+                    <div id="response"></div>
+               </div>
+               <div class="modal-footer">
+                   <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+               </div>
+            </div>
+         </div>
+      </div>
+
+<script type="text/javascript">
+
+    var spinner = document.getElementById("spinner");
+    spinner.style.display = "none";
+
+    function storeExpenses(event){
+
+        var url = "{{url('expenses')}}";
+        event.preventDefault();
+
+        var rfc                 = document.getElementsByName("rfc")[0].value;
+        var birthdate           = document.getElementsByName("birthdate")[0].value;
+        var monthly_salary      = document.getElementsByName("monthly_salary")[0].value;
+        var monthly_expenses    = document.getElementsByName("monthly_expenses")[0].value;
+        var dependents          = document.getElementsByName("dependents")[0].value;
+
+        let _data = {
+            "rfc"               : rfc              ,
+            "birthdate"         : birthdate        ,
+            "monthly_salary"    : monthly_salary   ,
+            "monthly_expenses"  : monthly_expenses ,
+            "dependents"        : dependents
+        }
+
+        spinner.style.display = "block";
+        fetch(url,{
+            headers : {
+                "X-Requested-With"  : "XMLHttpRequest",
+                "Content-Type"      : "application/json",
+                "X-CSRF-TOKEN"      : @json(csrf_token())
+            },
+            method: "POST",
+            body: JSON.stringify(_data),
+        })
+        .then(data => { return data.json()})
+        .then(response => {
+            console.log(response.message);
+            var text = document.getElementById("response");
+            text.innerHTML = '<h3>'+response.message+'</h3>';
+            spinner.style.display = "none";
+
+            $('#score').modal('show');
+        });
+
+
+    }
+
+</script>
+
+
+
+
 @endsection
-<script> </script>
+

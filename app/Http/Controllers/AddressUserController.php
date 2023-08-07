@@ -59,30 +59,13 @@ class AddressUserController extends Controller
     {
         $response = $this->_addressUserService->store();
 
-        return view("expenses");
+        return view("expenses",[
+           "rfc"                => \request()->user()?->info?->rfc,
+           "birthdate"          => \request()->user()?->info?->birthdate ,
+           "monthly_salary"     => \request()->user()?->info?->monthly_salary ,
+           "monthly_expenses"   => \request()->user()?->info?->monthly_expenses     ,
+           "dependents"         => \request()->user()?->info?->dependents     ,
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(AddressUser $addressUser)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateAddressUserRequest $request, AddressUser $addressUser)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(AddressUser $addressUser)
-    {
-        //
-    }
 }

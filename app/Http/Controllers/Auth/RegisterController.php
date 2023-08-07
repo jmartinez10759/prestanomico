@@ -65,15 +65,13 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        $password = "Jorge.20232$";
-
         $user =  User::query()->updateOrCreate([
             'name'          => $data['name'],
             'last_name'     => $data['last_name'],
             'second_name'   => $data['second_name'],
             'phone'         => $data['phone'],
             'email'         => $data['email'],
-            'password'      => Hash::make($password),
+            'password'      => Hash::make($data["password"]),
         ]);
 
         #Mail::to($user->email)->send(new WelcomeMail($user,$password));

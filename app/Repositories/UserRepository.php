@@ -44,6 +44,21 @@ class UserRepository extends BaseRepository
     }
 
     /**
+     * Realiza la inserccion de la informacion del Usuario
+     *
+     * @param array $attributes
+     * @return Model|null
+     */
+    public function relationshipInfoRepository(array $attributes): ?Model
+    {
+        return auth()->user()->info()->updateOrCreate([
+            "user_id" => auth()->user()->id
+        ],$attributes);
+
+    }
+
+
+    /**
      * @param array $attributes
      * @param string $id
      * @return Model|null
@@ -81,5 +96,30 @@ class UserRepository extends BaseRepository
 
         return $response["token"];
     }
+
+     /**
+     * Realiza la conexion para evaluar al usuario mediante el RFC del Usuario
+     *
+     * @throws \Exception
+     */
+    public function getWsAssessment(string $rfc, string $token): string
+    {
+
+        $formParams   = [
+            "rfc"     => $rfc,
+        ];
+        $ws = Http::withToken($token)->asForm()->post(
+            "https://sitiowebdesarrollo.centralus.cloudapp.azure.com/api/evaluacion",
+            $formParams
+        );
+        $response = $ws->collect()->toArray();
+
+        if (!$response["success"])
+            throw new \Exception($response["message"],Response::HTTP_UNPROCESSABLE_ENTITY);
+
+        return $response["message"];
+    }
+
+
 
 }

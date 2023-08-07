@@ -24,7 +24,17 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        return view("home",[
+           "address"    => \request()->user()?->address?->address,
+           "no_int"     => \request()->user()?->address?->no_int ,
+           "no_ext"     => \request()->user()?->address?->no_ext ,
+           "cp"         => \request()->user()?->address?->cp     ,
+           "state"      => \request()->user()?->address?->state  ,
+           "city"       => \request()->user()?->address?->city   ,
+           "colony"     => \request()->user()?->address?->colony ,
+           "status"     => \request()->user()?->address?->status ,
+        ]);
+
     }
 
     /**
@@ -48,15 +58,16 @@ class HomeController extends Controller
         $response = (new UserService())->saveRepository(\request()->except(["_token"]));
 
         return view("home",[
-           "address"    => \request()->user()?->address,
-           "no_int"     => \request()->user()?->no_int ,
-           "no_ext"     => \request()->user()?->no_ext ,
-           "cp"         => \request()->user()?->cp     ,
-           "state"      => \request()->user()?->state  ,
-           "city"       => \request()->user()?->city   ,
-           "colony"     => \request()->user()?->colony ,
-           "status"     => \request()->user()?->status ,
+           "address"    => \request()->user()?->address?->address,
+           "no_int"     => \request()->user()?->address?->no_int ,
+           "no_ext"     => \request()->user()?->address?->no_ext ,
+           "cp"         => \request()->user()?->address?->cp     ,
+           "state"      => \request()->user()?->address?->state  ,
+           "city"       => \request()->user()?->address?->city   ,
+           "colony"     => \request()->user()?->address?->colony ,
+           "status"     => \request()->user()?->address?->status ,
         ]);
+
     }
 
 }

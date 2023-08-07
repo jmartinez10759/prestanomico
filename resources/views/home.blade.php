@@ -173,8 +173,8 @@
         </div>
     </div>
 </div>
-@endsection
-    <script>
+
+<script type="text/javascript">
 
         function getZipCode() {
 
@@ -214,3 +214,7 @@
         getZipCode();
 
     </script>
+
+
+
+@endsection
