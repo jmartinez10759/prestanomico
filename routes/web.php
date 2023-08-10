@@ -30,8 +30,11 @@ Route::get('/zip-code', [AddressUserController::class, 'zipcode'])->name('zipcod
 Route::get('/registers', [HomeController::class, 'viewRegisters'])->name('view.registers');
 Route::get('/address', [AddressUserController::class, 'viewAddress'])->name('view.address');
 Route::get('/expenses', [InfoUserController::class, 'viewExpenses'])->name('view.expenses');
+Route::get('/assessments', [InfoUserController::class, 'viewAssessment'])->name('view.assessment');
 
 
 Route::post('/registers', [HomeController::class, 'storeRegisterUser'])->name('redirectTo.address');
 Route::post('/address', [AddressUserController::class, 'store'])->name('redirectTo.expenses');
 Route::post('/expenses', [InfoUserController::class, 'store'])->name('finished');
+Route::post('/assessments', [InfoUserController::class, 'storeAssessment'])->name('assessment');
+Route::post('/vouchers', [InfoUserController::class, 'storeVoucher'])->name('voucher');

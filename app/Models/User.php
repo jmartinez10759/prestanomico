@@ -59,4 +59,15 @@ class User extends Authenticatable
 
     }
 
+    public function assessment()
+    {
+        return $this->hasOne(UserAssessment::class);
+
+    }
+
+    public function voucher()
+    {
+        return $this->hasOne(VoucherUser::class);
+    }
+
 }

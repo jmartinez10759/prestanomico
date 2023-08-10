@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\{User};
-use Illuminate\Support\Facades\{Cache, DB, Http};
+use Illuminate\Support\Facades\{Cache, DB, Http, Storage };
 use Illuminate\Http\{Response};
 
 class UserRepository extends BaseRepository
@@ -57,6 +57,39 @@ class UserRepository extends BaseRepository
 
     }
 
+    /**
+     * Realiza la inserccion de la evaluacion del Usuario
+     *
+     * @param array $attributes
+     * @return Model|null
+     */
+    public function relationshipAssessmentRepository(array $attributes): ?Model
+    {
+        return auth()->user()->assessment()->updateOrCreate([
+            "user_id" => auth()->user()->id
+        ],$attributes);
+
+    }
+
+    /**
+     * Realiza la inserccion de los comprobantes del Usuario
+     *
+     * @param array $attributes
+     * @return Model|null
+     */
+    public function relationshipVouchersRepository(array $attributes): ?Model
+    {
+        $response = auth()->user()?->voucher;
+        if($response?->path_address)
+            Storage::disk("public")->delete($response?->path_address);
+        if($response?->path_income)
+            Storage::disk("public")->delete($response?->path_income);
+
+        return auth()->user()->voucher()->updateOrCreate([
+            "user_id" => auth()->user()->id
+        ],$attributes);
+
+    }
 
     /**
      * @param array $attributes
@@ -117,9 +150,32 @@ class UserRepository extends BaseRepository
         if (!$response["success"])
             throw new \Exception($response["message"],Response::HTTP_UNPROCESSABLE_ENTITY);
 
-        return $response["message"];
+        return $response["respuesta_evaluacion"];
     }
 
+    /**
+     * Realiza la conexion para evaluar al usuario mediante el RFC del Usuario
+     *
+     * @return  array
+     * @throws \Exception
+     */
+    public function getWsOffers(string $rfc, string $token): array
+    {
+
+        $formParams   = [
+            "rfc"     => $rfc,
+        ];
+        $ws = Http::withToken($token)->asForm()->post(
+            "https://sitiowebdesarrollo.centralus.cloudapp.azure.com/api/ofertas",
+            $formParams
+        );
+        $response = $ws->collect()->toArray();
+
+        if (!$response["success"])
+            throw new \Exception($response["message"],Response::HTTP_UNPROCESSABLE_ENTITY);
+
+        return $response["datos_oferta"];
+    }
 
 
 }

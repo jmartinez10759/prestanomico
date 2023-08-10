@@ -143,8 +143,92 @@
     </div>
 </div>
 
- <!-- Modal -->
-      <div class="modal fade" id="score" >
+ <!-- Modal Accepted -->
+      <div class="modal fade" id="score_approved" >
+         <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <form method="POST" action="{{ route('assessment') }}">
+                    @csrf
+                    <div class="modal-header">
+                      <h4 class="modal-title">Solicitud Aprobada</h4>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="row mb-3">
+                            <label for="amount" class="col-md-4 col-form-label text-md-end">Monto: </label>
+
+                            <div class="col-md-6">
+                                <input id="amount"
+                                        type="text"
+                                        class="form-control"
+                                        name="amount"
+                                        readonly
+                                        required
+                                >
+
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label for="payment" class="col-md-4 col-form-label text-md-end">Pago Mensual: </label>
+
+                            <div class="col-md-6">
+                                <input id="payment"
+                                        type="text"
+                                        class="form-control"
+                                        name="payment"
+                                        readonly
+                                        required
+                                >
+
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label for="term" class="col-md-4 col-form-label text-md-end">Plazo: </label>
+
+                            <div class="col-md-6">
+                                <input id="term"
+                                        type="text"
+                                        class="form-control"
+                                        name="term"
+                                        readonly
+                                        required
+                                >
+
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label for="rate" class="col-md-4 col-form-label text-md-end">Tasa Interes: </label>
+
+                            <div class="col-md-6">
+                                <input id="rate"
+                                        type="text"
+                                        class="form-control"
+                                        name="rate"
+                                        readonly
+                                        required
+                                >
+
+                            </div>
+                        </div>
+
+                    </div>
+                     <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Aceptar</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Rechazar</button>
+                     </div>
+               </form>
+            </div>
+         </div>
+      </div>
+
+
+ <!-- Modal Rejected -->
+      <div class="modal fade" id="score_rejected" >
          <div class="modal-dialog">
 
             <!-- Modal content-->
@@ -199,12 +283,23 @@
         })
         .then(data => { return data.json()})
         .then(response => {
-            console.log(response.message);
-            var text = document.getElementById("response");
-            text.innerHTML = '<h3>'+response.message+'</h3>';
+
+            if(response.message !== undefined){
+                var text = document.getElementById("response");
+                text.innerHTML = '<h3>'+response.message+'</h3>';
+
+                spinner.style.display = "none";
+                return $('#score_rejected').modal('show');
+            }
+
+            document.getElementById('amount').value  = response.monto;
+            document.getElementById('payment').value = response.pago_mensual;
+            document.getElementById('term').value    = response.plazo;
+            document.getElementById('rate').value    = response.tasa_interes;
+
+            $("#score_approved").modal("show");
             spinner.style.display = "none";
 
-            $('#score').modal('show');
         });
 
 
