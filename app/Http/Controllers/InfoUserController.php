@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreInfoUserRequest;
-use App\Http\Requests\UpdateInfoUserRequest;
-use App\Models\InfoUser;
+use App\Http\Requests\{StoreInfoUserRequest, StoreAssessmentRequest, StoreVoucherRequest };
 use App\Services\{UserService};
+use Illuminate\Support\Facades\{Session};
 
 class InfoUserController extends Controller
 {
@@ -24,50 +23,66 @@ class InfoUserController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Show the form for creating a new resource.
      */
-    public function store(StoreInfoUserRequest $request)
+    public function viewVoucher()
+    {
+        return view("voucher");
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function viewAssessment()
+    {
+        return view("assessment");
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @return array
+     */
+    public function store(StoreInfoUserRequest $request): array
     {
         $response = (new UserService)->relationshipInfoRepository(
             \request()->merge(["status" => true])->except("_token")
         );
 
-        $token      = (new UserService)->getWsToken();
-        $assessment = (new UserService)->getWsAssessment($response?->rfc,$token);
-
-        dd($assessment);
+        return (new UserService())->getScoreValidated($response);
 
     }
 
     /**
-     * Display the specified resource.
+     * Agrega la informacion en la tabla de assesment por usuario
+     *
      */
-    public function show(InfoUser $infoUser)
+    public function storeAssessment(StoreAssessmentRequest $request)
     {
-        //
+        $response = (new UserService)->relationshipAssessmentRepository(\request()->except("_token"));
+
+        return view("voucher");
+
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Agrega la informacion en la tabla de assesment por usuario
+     *
      */
-    public function edit(InfoUser $infoUser)
+    public function storeVoucher(StoreVoucherRequest $request)
     {
-        //
+        $file = "vouchers";
+        $pathIncome  = \request()->file("voucher_income")->store($file,"public");
+        $pathAddress = \request()->file("voucher_address")->store($file,"public");
+        $data = [
+            "path_income"  => $pathIncome,
+            "path_address" => $pathAddress,
+        ];
+        (new UserService)->relationshipVouchersRepository($data);
+        Session::flash('status', "Se cargaron con exito los comprobantes");
+        return view("voucher");
+
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateInfoUserRequest $request, InfoUser $infoUser)
-    {
-        //
-    }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(InfoUser $infoUser)
-    {
-        //
-    }
 }
